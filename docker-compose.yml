@@ -1,0 +1,27 @@
+services:
+  crossmind:
+    build: .
+    image: crossmind:1.0.0
+    ports:
+      - "8000:8000"
+    environment:
+      XM_ENV: prod
+      XM_LOG_JSON: "true"
+      XM_LLM_PROVIDER: ${XM_LLM_PROVIDER:-mock}
+      XM_LLM_API_KEY: ${XM_LLM_API_KEY:-}
+      XM_LLM_BASE_URL: ${XM_LLM_BASE_URL:-https://api.deepseek.com/v1}
+      XM_LLM_MODEL: ${XM_LLM_MODEL:-deepseek-chat}
+      XM_API_KEYS: ${XM_API_KEYS:-demo-key-alpha:tenant-alpha,demo-key-beta:tenant-beta}
+      XM_DB_PATH: /app/var/crossmind.db
+      XM_TRACE_DIR: /app/var/traces
+    volumes:
+      - crossmind-var:/app/var
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/readyz').status==200 else 1)"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  crossmind-var:
