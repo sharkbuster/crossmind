@@ -1,0 +1,79 @@
+{
+  "version": "2026-10",
+  "currency": "USD",
+  "products": [
+    {
+      "sku": "CB-AS-001",
+      "name": "AirSound 便携蓝牙音箱",
+      "category": "音频",
+      "price_usd": 49.9,
+      "cost_usd": 18.4,
+      "weight_g": 320,
+      "rating": 4.6,
+      "monthly_sales": 1820,
+      "tags": ["IPX5", "24h 续航", "TWS"],
+      "description": "IPX5 防水、24 小时续航的户外蓝牙音箱，适合露营与骑行场景。"
+    },
+    {
+      "sku": "CB-FT-002",
+      "name": "FitTrack 智能手环",
+      "category": "可穿戴",
+      "price_usd": 39.9,
+      "cost_usd": 14.2,
+      "weight_g": 24,
+      "rating": 4.4,
+      "monthly_sales": 3110,
+      "tags": ["5ATM", "14 天续航", "血氧"],
+      "description": "5ATM 防水、14 天续航的轻量智能手环，主打健康监测。"
+    },
+    {
+      "sku": "CB-PG-003",
+      "name": "PowerGo 20000mAh 移动电源",
+      "category": "充电配件",
+      "price_usd": 35.9,
+      "cost_usd": 13.6,
+      "weight_g": 420,
+      "rating": 4.7,
+      "monthly_sales": 4260,
+      "tags": ["65W PD", "74Wh 可登机", "双口输出"],
+      "description": "65W PD 快充，74Wh 合规可随身登机，可给笔记本供电。"
+    },
+    {
+      "sku": "CB-CB-004",
+      "name": "CleanBot 激光导航扫地机器人",
+      "category": "清洁电器",
+      "price_usd": 299,
+      "cost_usd": 158,
+      "weight_g": 3600,
+      "rating": 4.3,
+      "monthly_sales": 540,
+      "tags": ["4000Pa", "激光导航", "分区清扫"],
+      "description": "激光导航、4000Pa 吸力，适合 80-120 平方米户型。"
+    }
+  ],
+  "market_signals": {
+    "音频": {"growth_rate": "18.4%", "median_price": 45.0, "competition": "medium"},
+    "可穿戴": {"growth_rate": "11.2%", "median_price": 42.5, "competition": "high"},
+    "充电配件": {"growth_rate": "22.7%", "median_price": 32.0, "competition": "medium"},
+    "清洁电器": {"growth_rate": "9.8%", "median_price": 310.0, "competition": "high"}
+  },
+  "competitors": {
+    "音频": [
+      {"name": "SoundPeak Mini", "price": 45.0, "rating": 4.5, "strength": "品牌认知"},
+      {"name": "BassGo Lite", "price": 32.0, "rating": 4.1, "strength": "低价"},
+      {"name": "TrailBox Pro", "price": 69.0, "rating": 4.6, "strength": "防护等级"}
+    ],
+    "可穿戴": [
+      {"name": "FitNow 3", "price": 49.0, "rating": 4.3, "strength": "生态"},
+      {"name": "BandX", "price": 29.9, "rating": 4.0, "strength": "价格"}
+    ],
+    "充电配件": [
+      {"name": "VoltCore 20K", "price": 39.9, "rating": 4.6, "strength": "快充协议全"},
+      {"name": "PocketJuice", "price": 25.9, "rating": 4.0, "strength": "便携"}
+    ],
+    "清洁电器": [
+      {"name": "SweepMax L5", "price": 349.0, "rating": 4.4, "strength": "自清洁基站"},
+      {"name": "DustNinja", "price": 259.0, "rating": 4.1, "strength": "性价比"}
+    ]
+  }
+}

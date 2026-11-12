@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CrossMind · 跨境电商多智能体运营平台</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">CM</div>
+        <div>
+          <div class="brand-name">CrossMind</div>
+          <div class="brand-sub">跨境电商多智能体平台</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-view="chat">对话控制台</button>
+        <button class="nav-item" data-view="tasks">任务与审批</button>
+        <button class="nav-item" data-view="kb">知识库</button>
+        <button class="nav-item" data-view="ops">运维观测</button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <label class="field">
+          <span>API Key</span>
+          <input id="apiKey" value="demo-key-alpha" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>会话</span>
+          <input id="sessionId" placeholder="自动生成" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>站点</span>
+          <select id="channel">
+            <option value="amazon">Amazon</option>
+            <option value="shopee">Shopee</option>
+            <option value="tiktok">TikTok Shop</option>
+            <option value="site">独立站</option>
+          </select>
+        </label>
+        <div class="status" id="status">离线模式 · 未连接</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- chat -->
+      <section class="view active" id="view-chat">
+        <header class="view-head">
+          <div>
+            <h1>对话控制台</h1>
+            <p>路由 → 规划 → 检索 → 专精 → 自检 → 人工确认，全链路 Trace 可查。</p>
+          </div>
+          <div class="chips" id="quickAsk">
+            <button class="chip">未拆封商品多久可以退货？</button>
+            <button class="chip">PowerGo 能带上飞机吗？</button>
+            <button class="chip">给 AirSound 写一版 Amazon 文案</button>
+            <button class="chip">音频品类值得做吗？给我选品分析</button>
+          </div>
+        </header>
+
+        <div class="chat-log" id="chatLog"></div>
+
+        <form class="composer" id="composer">
+          <textarea id="message" rows="1" placeholder="输入问题，Enter 发送，Shift+Enter 换行"></textarea>
+          <button type="submit" id="sendBtn">发送</button>
+        </form>
+      </section>
+
+      <!-- tasks -->
+      <section class="view" id="view-tasks">
+        <header class="view-head">
+          <div><h1>任务与审批</h1><p>高风险产出（文案 / 选品）在发布前进入人工确认队列。</p></div>
+          <button class="btn" id="refreshTasks">刷新</button>
+        </header>
+        <div class="table-wrap"><table class="table"><thead>
+          <tr><th>任务</th><th>类型</th><th>状态</th><th>创建时间</th><th>操作</th></tr>
+        </thead><tbody id="taskRows"></tbody></table></div>
+      </section>
+
+      <!-- kb -->
+      <section class="view" id="view-kb">
+        <header class="view-head">
+          <div><h1>知识库</h1><p>混合检索（BM25 + 哈希向量）→ 阈值 → 重排；引用由系统回填。</p></div>
+          <div class="search-row">
+            <input id="kbQuery" placeholder="例如：标准专线几天送达" />
+            <button class="btn" id="kbSearch">检索</button>
+          </div>
+        </header>
+        <div class="grid-2">
+          <div class="panel"><h2>语料</h2><div id="kbStats" class="muted">加载中…</div></div>
+          <div class="panel"><h2>检索结果</h2><div id="kbHits" class="muted">输入关键词后展示召回的 chunk 与分数。</div></div>
+        </div>
+      </section>
+
+      <!-- ops -->
+      <section class="view" id="view-ops">
+        <header class="view-head">
+          <div><h1>运维观测</h1><p>Prometheus 指标、Trace 树、评测报告与审计日志。</p></div>
+          <button class="btn" id="refreshOps">刷新</button>
+        </header>
+        <div class="cards" id="opsCards"></div>
+        <div class="grid-2">
+          <div class="panel"><h2>最近 Trace</h2><div id="traceList" class="muted">加载中…</div></div>
+          <div class="panel"><h2>评测指标</h2><div id="evalBox" class="muted">加载中…</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "description": "跨境客服知识库评测集：可答用例验证引用与忠实度，不可答用例验证拒答。expected_doc_ids 为判定 hit@k / 引用准确率的依据。",
+  "cases": [
+    {"id": "E01", "question": "未拆封的商品多久内可以申请无理由退货？", "answerable": true, "expected_doc_ids": ["AP-001"], "expected_key_points": ["30 天"]},
+    {"id": "E02", "question": "已经拆封但没用过的商品，退货窗口是多少天？", "answerable": true, "expected_doc_ids": ["AP-001"], "expected_key_points": ["15 天"]},
+    {"id": "E03", "question": "退货后多久能收到退款？", "answerable": true, "expected_doc_ids": ["AP-001"], "expected_key_points": ["3 至 5 个工作日"]},
+    {"id": "E04", "question": "标准专线一般多少天能送到？", "answerable": true, "expected_doc_ids": ["AP-002"], "expected_key_points": ["7 至 12"]},
+    {"id": "E05", "question": "订单满多少美元可以免标准专线运费？", "answerable": true, "expected_doc_ids": ["AP-002"], "expected_key_points": ["59 美元"]},
+    {"id": "E06", "question": "包裹超过多少天没收到可以申请理赔？", "answerable": true, "expected_doc_ids": ["AP-002"], "expected_key_points": ["30 天"]},
+    {"id": "E07", "question": "平台支持货到付款吗？", "answerable": true, "expected_doc_ids": ["AP-003"], "expected_key_points": ["不支持货到付款"]},
+    {"id": "E08", "question": "电子发票一般几个工作日开具？", "answerable": true, "expected_doc_ids": ["AP-003"], "expected_key_points": ["7 个工作日"]},
+    {"id": "E09", "question": "平台销售的电子产品保修期是多久？", "answerable": true, "expected_doc_ids": ["AP-004"], "expected_key_points": ["12 个月"]},
+    {"id": "E10", "question": "电池和充电线这些配件的保修期是多久？", "answerable": true, "expected_doc_ids": ["AP-004"], "expected_key_points": ["6 个月"]},
+    {"id": "E11", "question": "寄修的话维修周期大概多长？", "answerable": true, "expected_doc_ids": ["AP-004"], "expected_key_points": ["7 至 15 个工作日"]},
+    {"id": "E12", "question": "美国市场的免税额度是多少美元？", "answerable": true, "expected_doc_ids": ["AP-005"], "expected_key_points": ["800 美元"]},
+    {"id": "E13", "question": "PowerGo 移动电源可以带上飞机吗？", "answerable": true, "expected_doc_ids": ["PM-003", "AP-005"], "expected_key_points": ["74Wh"]},
+    {"id": "E14", "question": "100 积分能抵扣多少钱？", "answerable": true, "expected_doc_ids": ["AP-006"], "expected_key_points": ["1 美元"]},
+    {"id": "E15", "question": "积分有效期是多久？", "answerable": true, "expected_doc_ids": ["AP-006"], "expected_key_points": ["12 个月"]},
+    {"id": "E16", "question": "申请删除个人数据后多久处理完成？", "answerable": true, "expected_doc_ids": ["AP-007"], "expected_key_points": ["30 天"]},
+    {"id": "E17", "question": "投诉提交后多久会有首次响应？", "answerable": true, "expected_doc_ids": ["AP-008"], "expected_key_points": ["48 小时"]},
+    {"id": "E18", "question": "AirSound 音箱的续航时间是多久？", "answerable": true, "expected_doc_ids": ["PM-001"], "expected_key_points": ["24 小时"]},
+    {"id": "E19", "question": "FitTrack 手环充满电能用多少天？", "answerable": true, "expected_doc_ids": ["PM-002"], "expected_key_points": ["14 天"]},
+    {"id": "E20", "question": "CleanBot 扫地机器人的吸力是多少？", "answerable": true, "expected_doc_ids": ["PM-004"], "expected_key_points": ["4000Pa"]},
+    {"id": "U01", "question": "你们线下门店在哪里？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "知识库无门店信息"},
+    {"id": "U02", "question": "双十一大促是什么时间开始？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "知识库无促销日历"},
+    {"id": "U03", "question": "加拿大清关需要提供什么资料？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "仅覆盖欧盟/日本/巴西，未含加拿大"},
+    {"id": "U04", "question": "你们支持以旧换新吗？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "知识库无该服务"},
+    {"id": "U05", "question": "可以用加密货币付款吗？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "支付方式清单未包含加密货币"},
+    {"id": "U06", "question": "学生有专属折扣吗？", "answerable": false, "expected_doc_ids": [], "expected_key_points": [], "notes": "会员政策未包含学生优惠"}
+  ]
+}
