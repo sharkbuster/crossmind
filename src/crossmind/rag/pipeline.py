@@ -91,6 +91,7 @@ class RagPipeline:
             locale=locale,
             require_citations=require_citations,
             started=started,
+            apply_gate=False,
         )
 
     async def answer_with_context(
@@ -102,8 +103,40 @@ class RagPipeline:
         locale: str = "zh-CN",
         require_citations: bool = True,
         started: float | None = None,
+        apply_gate: bool = True,
     ) -> RagAnswer:
         started = started if started is not None else time.perf_counter()
+
+        if not chunks:
+            return RagAnswer(
+                text=REFUSAL_TEXT,
+                citations=[],
+                sources=[],
+                grounded=False,
+                no_answer=True,
+                warnings=["retrieval_below_threshold"],
+                model=self.chat_model.name,
+                latency_ms=int((time.perf_counter() - started) * 1000),
+            )
+
+        # The gate must also apply when the caller already has chunks (the graph
+        # retrieves in `research` and passes them here); otherwise /chat and
+        # /kb/answer would disagree about which questions are answerable.
+        if apply_gate:
+            answerable, score, missing = self.gate.evaluate(question, chunks)
+            if not answerable:
+                log.info("answerability gate refused", extra={"coverage": score, "missing": missing[:6]})
+                return RagAnswer(
+                    text=REFUSAL_TEXT,
+                    citations=[],
+                    sources=chunks,
+                    grounded=False,
+                    no_answer=True,
+                    warnings=["answerability_gate", f"coverage={score}"],
+                    model=self.chat_model.name,
+                    latency_ms=int((time.perf_counter() - started) * 1000),
+                )
+
         tracer = get_tracer()
         warnings: list[str] = []
 

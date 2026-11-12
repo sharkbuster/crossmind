@@ -1,6 +1,26 @@
-﻿# Changelog
+# Changelog
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
+
+## [1.0.1] - 2026-11-12
+
+对抗性探测（并发、超大输入、跨接口一致性）发现并修复的问题。
+
+### Fixed
+
+- **限流首个请求必 429**：`elapsed` 可能为负（`now` 采样早于桶的 `updated_at`），`burst == cost` 时首条请求被拒。
+- **`/chat/stream` 拦截注入返回 500**：守卫在响应已开始后抛错，触发 `response already started`；改为流式响应前校验，现返回 422。
+- **降级路径 TypeError**：`MockChatModel._render_generic` 参数不匹配，主模型故障回退时会二次崩溃。
+- **`task.type` 恒为 `qa`**：路由出的意图只用于审计，未写回任务；现按意图持久化。
+- **可答性门禁未在 `/chat` 生效**：图路径把检索结果直接交给生成，导致同一问题 `/chat` 作答、`/kb/answer` 拒答；门禁下沉到 `answer_with_context`。
+- **并发重复 `Idempotency-Key` 建多个任务**：读后写存在竞态；改为原子预留（`INSERT OR IGNORE` + pending 标记），进行中返回 409。
+- **超大请求体被接受**：新增 1 MB 上限与 413 错误信封。
+- **审批后任务输出结构被替换**：只保留 `answer/state`，客户端字段断裂；改为在原输出上覆盖。
+- **`XM_IDEMPOTENCY_TTL_S` 配置未生效**：现按 TTL 清理过期幂等记录。
+
+### Changed
+
+- `pyproject.toml` 的 `addopts` 去掉 `-q`，避免与命令行 `-q` 叠加成 `-qq` 导致汇总行消失。
 
 ## [1.0.0] - 2026-11-12
 

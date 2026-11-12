@@ -1,4 +1,4 @@
-﻿# 架构说明
+# 架构说明
 
 ## 1. 目标与约束
 
@@ -169,6 +169,7 @@ audit(id PK, tenant_id, action, resource, detail, trace_id, created_at)
 | HTTP | ASGITransport 全链路 | 401/422/409、幂等、租户隔离、SSE |
 | 质量 | 评测脚本 | hit@k / MRR / 拒答 / 忠实度 |
 
-共 145 条，全部离线可复现，行覆盖率 92%。
+共 159 条，全部离线可复现，行覆盖率 93%。
+
 
 

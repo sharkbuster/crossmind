@@ -1,4 +1,4 @@
-﻿"""Threshold calibration probe (evidence for docs/EVALUATION.md).
+"""Threshold calibration probe (evidence for docs/EVALUATION.md).
 
 Prints, for every evaluation case, the retrieval score and the answerability
 coverage.  The point is to choose thresholds from the observed gap between

@@ -51,7 +51,7 @@ def container(settings: Settings):
 async def client(container) -> httpx.AsyncClient:
     container.limiter.reset()
     app = create_app(container.settings, container=container)
-    transport = httpx.ASGITransport(app=app)
+    transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)
     async with httpx.AsyncClient(transport=transport, base_url="http://crossmind.test") as http_client:
         yield http_client
 

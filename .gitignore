@@ -12,3 +12,7 @@ dist/
 .DS_Store
 node_modules/
 jieba.cache
+.coverage
+htmlcov/
+coverage.xml
+

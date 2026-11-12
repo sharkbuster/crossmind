@@ -1,12 +1,12 @@
 {
-  "requests": 300,
-  "concurrency": 20,
+  "requests": 120,
+  "concurrency": 12,
   "errors": 0,
-  "duration_s": 2.571,
-  "rps": 116.7,
-  "p50_ms": 164.137,
-  "p90_ms": 206.569,
-  "p95_ms": 213.216,
-  "p99_ms": 245.835,
-  "mean_ms": 168.99
+  "duration_s": 0.93,
+  "rps": 129.0,
+  "p50_ms": 87.276,
+  "p90_ms": 121.665,
+  "p95_ms": 128.035,
+  "p99_ms": 152.88,
+  "mean_ms": 90.56
 }

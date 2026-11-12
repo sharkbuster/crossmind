@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crossmind"
-version = "1.0.0"
+version = "1.0.1"
 description = "CrossMind - 跨境电商多智能体运营平台 (cross-border commerce multi-agent platform)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -51,3 +51,4 @@ ignore = ["B008", "ARG001"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+

@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     # ---- rate limit (token bucket, per tenant) ----
     rate_limit_rps: float = Field(default=20.0, gt=0)
     rate_limit_burst: int = Field(default=40, ge=1)
+    max_body_bytes: int = Field(default=1_000_000, ge=1024)
 
     # ---- llm ----
     llm_provider: Provider = "mock"

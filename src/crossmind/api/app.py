@@ -62,6 +62,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
     )
     app.state.container = container
     app.state.settings = settings
+    app.state.max_body_bytes = settings.max_body_bytes
 
     app.add_middleware(ObservabilityMiddleware)
     app.add_middleware(

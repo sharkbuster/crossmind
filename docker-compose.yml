@@ -1,7 +1,7 @@
 services:
   crossmind:
     build: .
-    image: crossmind:1.0.0
+    image: crossmind:1.0.1
     ports:
       - "8000:8000"
     environment:
@@ -25,3 +25,4 @@ services:
 
 volumes:
   crossmind-var:
+

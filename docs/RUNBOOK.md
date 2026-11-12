@@ -1,4 +1,4 @@
-﻿# 运维手册（RUNBOOK）
+# 运维手册（RUNBOOK）
 
 ## 1. 启动与停止
 
@@ -66,6 +66,8 @@ curl -s 'localhost:8000/api/v1/kb/search?q=保修期&top_k=5' -H 'X-API-Key: dem
 | 401 `unauthorized` | 缺 `X-API-Key` 或 key 不在 `XM_API_KEYS` | 核对环境变量；key 以 `key:tenant` 形式配置 |
 | 422 `guard_blocked` | 输入命中注入特征或超长 | 查看 `details.reason`；确认是误报则调 `InputGuard` 规则 |
 | 429 `rate_limited` | 租户超过令牌桶 | 看 `details.retry_after_s`；临时调大 `XM_RATE_LIMIT_RPS` |
+| 409 `conflict` | 同一 `Idempotency-Key` 的上一个请求仍在执行 | 这是防重复计费的设计行为；客户端按 `details.retry_after_s` 退避重试即可 |
+| 413 `payload_too_large` | 请求体超过 `XM_MAX_BODY_BYTES`（默认 1 MB） | 检查是否把大对象塞进 `options`；上限可按需调大 |
 | 503 持续 | 在线模型不可用且熔断打开 | 看 `crossmind_llm_calls_total{status="degraded"}`；熔断 30s 后自动半开 |
 | 拒答率突然升高 | 语料变更、阈值改动、embedding 服务异常 | 跑 `scripts/calibrate.py` 对比分布；检查 `retrieval` 的 `degraded` 标记 |
 | 答案无引用 | 在线模型不遵守格式 | 系统会拦截为拒答并写 `warnings: ungrounded_answer_blocked`；检查提示词版本 |
@@ -100,11 +102,12 @@ curl -s 'localhost:8000/api/v1/kb/search?q=保修期&top_k=5' -H 'X-API-Key: dem
 
 ## 8. 发版检查单
 
-- [ ] `pytest tests -q` 全绿（145 条，覆盖率 ≥ 90%）
+- [ ] `pytest tests -q` 全绿（159 条，覆盖率 ≥ 90%）
 - [ ] `python scripts/run_eval.py` 退出码 0，指标不低于上一版
 - [ ] `python scripts/load_test.py` 无错误，p95 不超过基线 20%
 - [ ] `/readyz` 返回 `ready`
 - [ ] 变更记录写入 `CHANGELOG.md`
 - [ ] 若改动了提示词或阈值，在 PR 描述里贴出评测对比
+
 
 

@@ -1,4 +1,4 @@
-﻿# CrossMind
+# CrossMind
 
 > 跨境电商多智能体运营平台 · 客服 / 文案 / 翻译 / 选品 四模块一站式交付
 > Python 3.11+ · FastAPI · LangGraph · 混合检索 RAG · HITL 审批 · 全链路可观测
@@ -13,7 +13,7 @@ python -m uvicorn crossmind.api.app:app --port 8000
 
 | 维度 | 实测（本机离线模式，2026-11） |
 |---|---|
-| 自动化测试 | **145 passed**（单元 + HTTP 集成），0 skipped · 行覆盖率 **92%** |
+| 自动化测试 | **159 passed**（单元 + HTTP 集成），0 skipped · 行覆盖率 **93%** |
 | 检索质量 | hit@5 **1.0000** · MRR **1.0000**（26 条评测集） |
 | 拒答正确率 | **0.9231**（可答 20/20 不误拒；不可答 4/6 正确拒答） |
 | 引用与忠实度 | 引用准确率 **1.0000** · 忠实度 **0.9971** · 要点覆盖 **0.85** |
@@ -106,13 +106,13 @@ flowchart LR
 |---|---|---|
 | API Key → 租户 | `security/auth.py` | 常量时间比较，租户级数据隔离 |
 | 限流 | `security/ratelimit.py` | 令牌桶，按租户 + 路由划分预算，429 带 `Retry-After` |
-| 幂等 | `storage/db.py` + `/chat` | `Idempotency-Key` 重放同一响应，不重复计费 |
+| 幂等 | `storage/db.py` + `/chat` | `Idempotency-Key` 重放同一响应；并发重复请求返回 409，不重复计费 |
 | 输入防护 | `security/guard.py` | 提示注入拦截、卡号/手机号/邮箱脱敏后入日志 |
 | 配置校验 | `config.py` | 启动即校验（阈值范围、密钥格式、日志级别） |
 | 契约校验 | `domain/models.py` | pydantic 严格模型，`extra="forbid"` 防字段漂移 |
 | 可观测 | `obs/*` | JSON 日志 + Trace + Prometheus 指标 |
 | 审计 | `storage/db.py` | 审批、评测、拦截等动作留痕 |
-| 测试 | `tests/` | 145 条，覆盖检索、引用、门禁、编排、HTTP 契约、供应商降级 |
+| 测试 | `tests/` | 159 条，覆盖检索、引用、门禁、编排、HTTP 契约、供应商降级、并发幂等 |
 | 交付 | `Dockerfile` / `compose` / CI | 非 root 运行、健康检查、GitHub Actions 质量门禁 |
 
 ## 五、目录结构
@@ -134,7 +134,7 @@ crossmind/
 │   └── api/                 # 路由、依赖、中间件、错误处理
 ├── apps/web/                # 零构建 Vue-less 控制台（原生 JS + SSE）
 ├── data/                    # 12 篇语料 + 26 条评测集 + 商品目录
-├── tests/                   # 145 条测试（覆盖率 92%）
+├── tests/                   # 159 条测试（覆盖率 93%）
 ├── scripts/                 # 标定 / 评测 / 压测 / Windows 脚本
 ├── docs/                    # 架构、评测、运维、ADR、简历材料
 └── reports/                 # 评测与压测产物（可复现）
@@ -145,7 +145,7 @@ crossmind/
 ```bash
 make install    # 安装依赖
 make run        # 启动服务（/console/）
-make test       # 145 条测试
+make test       # 159 条测试
 make eval       # 离线评测 -> reports/rag-eval.{json,md}
 make load       # 300 请求 / 20 并发压测 -> reports/load-test.json
 make smoke      # 冒烟：能答的答、该拒的拒
@@ -172,6 +172,7 @@ Windows 用 `pwsh -File scripts/dev.ps1 test`（等价命令）。
 - 离线模型的翻译是**术语表替换的确定性玩具**，只用于打通链路，不代表翻译质量；真实质量需接在线模型后重测。
 - 可答性门禁是词面覆盖代理，两条例题（"加拿大清关""加密货币付款"）仍会误答，已定位并在评测报告里单列。
 - 并发压测下 p95 约 210 ms、吞吐约 117 rps：瓶颈是单进程 SQLite 同步写与单事件循环，扩容路径见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) 的演进章节。
+- 请求体上限 1 MB 依赖 `Content-Length` 头；chunked 传输时退化为字段级校验（`message` ≤ 4000 字符）。
 - 会话记忆只做最近 12 轮窗口，长期偏好记忆在 Roadmap 中。
 
 ## 九、Roadmap
@@ -185,6 +186,11 @@ Windows 用 `pwsh -File scripts/dev.ps1 test`（等价命令）。
 ---
 
 本项目为个人作品（非商业产品），语料与商品数据为虚构示例。许可证见 [LICENSE](LICENSE)。
+
+
+
+
+
 
 
 

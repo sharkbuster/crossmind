@@ -1,4 +1,4 @@
-﻿"""Tools available to agents.
+"""Tools available to agents.
 
 Each tool is a plain Python callable with an explicit spec, which keeps them
 testable in isolation and makes it trivial to expose the same catalogue over an

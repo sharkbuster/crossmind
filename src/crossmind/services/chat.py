@@ -74,11 +74,21 @@ class ChatService:
     ) -> ChatResponse:
         bind_tenant(principal.tenant_id)
         if idempotency_key:
-            cached = self.c.store.get_idempotent(idempotency_key, principal.tenant_id)
-            if cached is not None:
+            state, cached = self.c.store.reserve_idempotent(
+                idempotency_key, principal.tenant_id, ttl_s=self.c.settings.idempotency_ttl_s
+            )
+            if state == "replay":
                 CACHE_HITS.inc()
                 log.info("idempotent replay", extra={"key": idempotency_key})
                 return ChatResponse(**cached)
+            if state == "pending":
+                raise Conflict(
+                    "an identical request is still in flight",
+                    details={"header": "Idempotency-Key", "retry_after_s": 0.5},
+                )
+            reserved = True
+        else:
+            reserved = False
 
         guard = self.c.guard.inspect(request.message)
         if guard.blocked:
@@ -120,6 +130,8 @@ class ChatService:
             final_state: AgentState = await self.c.graph.ainvoke(state)
         except Exception as exc:
             self.c.store.update_task(task_id, status=TaskStatus.FAILED, error=str(exc)[:500])
+            if reserved:
+                self.c.store.release_idempotent(idempotency_key, principal.tenant_id)  # type: ignore[arg-type]
             ACTIVE_TASKS.set(0.0, status="running")
             log.exception("agent graph failed")
             raise
@@ -167,6 +179,7 @@ class ChatService:
             task_id,
             status=status,
             output=output,
+            task_type=task_type,
         )
         # Task type is derived from the routed intent, so fix it up after routing.
         self.c.store.audit(
@@ -182,8 +195,8 @@ class ChatService:
         if response.requires_approval:
             HITL_TASKS.inc(decision="pending")
 
-        if idempotency_key:
-            self.c.store.put_idempotent(idempotency_key, principal.tenant_id, output)
+        if idempotency_key and reserved:
+            self.c.store.complete_idempotent(idempotency_key, principal.tenant_id, output)
         return response
 
     # ------------------------------------------------------------------ streaming
@@ -278,11 +291,19 @@ class ChatService:
             self.c, AgentState(**raw_state), decision=str(request.decision)
         )
         status = TaskStatus(resumed.get("status", "succeeded"))
-        self.c.store.update_task(
-            task_id,
-            status=status,
-            output={"answer": resumed.get("draft", ""), "state": _jsonable_state(resumed)},
+        # Keep the shape of the original response so clients can read the same
+        # fields before and after approval, and only overlay what changed.
+        output = dict(task.output)
+        output.update(
+            {
+                "answer": resumed.get("draft", ""),
+                "status": str(status),
+                "requires_approval": False,
+                "approval_decision": str(request.decision),
+                "state": _jsonable_state(resumed),
+            }
         )
+        self.c.store.update_task(task_id, status=status, output=output)
         self.c.store.audit(
             principal.tenant_id,
             "task.approved" if status == TaskStatus.SUCCEEDED else "task.rejected",

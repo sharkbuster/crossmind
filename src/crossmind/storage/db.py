@@ -11,10 +11,13 @@ from __future__ import annotations
 import json
 import sqlite3
 import threading
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from crossmind.domain.models import TaskRecord, TaskStatus, TaskType, now_iso
+
+IDEMPOTENCY_PENDING = "__pending__"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS tasks (
@@ -116,6 +119,7 @@ class Store:
         status: TaskStatus | None = None,
         output: dict[str, Any] | None = None,
         error: str | None = None,
+        task_type: TaskType | None = None,
     ) -> None:
         sets = ["updated_at = ?"]
         values: list[Any] = [now_iso()]
@@ -128,6 +132,9 @@ class Store:
         if error is not None:
             sets.append("error = ?")
             values.append(error)
+        if task_type is not None:
+            sets.append("type = ?")
+            values.append(str(task_type))
         values.append(task_id)
         with self._lock:
             self._conn.execute(f"UPDATE tasks SET {', '.join(sets)} WHERE id = ?", values)
@@ -183,7 +190,65 @@ class Store:
             row = self._conn.execute(
                 "SELECT response FROM idempotency WHERE key = ? AND tenant_id = ?", (key, tenant_id)
             ).fetchone()
-        return json.loads(row["response"]) if row else None
+        if row is None or row["response"] == IDEMPOTENCY_PENDING:
+            return None
+        return json.loads(row["response"])
+
+    def reserve_idempotent(
+        self, key: str, tenant_id: str, *, ttl_s: int = 0
+    ) -> tuple[str, dict[str, Any] | None]:
+        """Atomically claim an idempotency key.
+
+        Returns ``("reserved", None)`` when the caller owns the key,
+        ``("pending", None)`` when an identical request is still running, and
+        ``("replay", response)`` when a completed response can be reused.
+        """
+        with self._lock:
+            if ttl_s:
+                self._purge_idempotent(ttl_s)
+            row = self._conn.execute(
+                "SELECT response FROM idempotency WHERE key = ? AND tenant_id = ?", (key, tenant_id)
+            ).fetchone()
+            if row is None:
+                self._conn.execute(
+                    "INSERT OR IGNORE INTO idempotency (key, tenant_id, response, created_at)"
+                    " VALUES (?,?,?,?)",
+                    (key, tenant_id, IDEMPOTENCY_PENDING, now_iso()),
+                )
+                self._conn.commit()
+                row = self._conn.execute(
+                    "SELECT response FROM idempotency WHERE key = ? AND tenant_id = ?",
+                    (key, tenant_id),
+                ).fetchone()
+                if row is not None and row["response"] == IDEMPOTENCY_PENDING:
+                    return "reserved", None
+            if row is None:
+                return "pending", None
+            if row["response"] == IDEMPOTENCY_PENDING:
+                return "pending", None
+            return "replay", json.loads(row["response"])
+
+    def complete_idempotent(self, key: str, tenant_id: str, response: dict[str, Any]) -> None:
+        with self._lock:
+            self._conn.execute(
+                "UPDATE idempotency SET response = ?, created_at = ? WHERE key = ? AND tenant_id = ?",
+                (json.dumps(response, ensure_ascii=False), now_iso(), key, tenant_id),
+            )
+            self._conn.commit()
+
+    def release_idempotent(self, key: str, tenant_id: str) -> None:
+        with self._lock:
+            self._conn.execute(
+                "DELETE FROM idempotency WHERE key = ? AND tenant_id = ? AND response = ?",
+                (key, tenant_id, IDEMPOTENCY_PENDING),
+            )
+            self._conn.commit()
+
+    def _purge_idempotent(self, ttl_s: int) -> None:
+        cutoff = (datetime.now(UTC) - timedelta(seconds=ttl_s)).isoformat(
+            timespec="milliseconds"
+        ).replace("+00:00", "Z")
+        self._conn.execute("DELETE FROM idempotency WHERE created_at < ?", (cutoff,))
 
     def put_idempotent(self, key: str, tenant_id: str, response: dict[str, Any]) -> None:
         with self._lock:

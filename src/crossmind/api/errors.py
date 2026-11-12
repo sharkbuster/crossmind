@@ -1,4 +1,4 @@
-﻿"""Error rendering: one envelope for every failure."""
+"""Error rendering: one envelope for every failure."""
 
 from __future__ import annotations
 
