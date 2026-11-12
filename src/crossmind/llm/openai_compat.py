@@ -19,6 +19,7 @@ class OpenAICompatChatModel(ChatModel):
         *,
         timeout_s: float = 30.0,
         name: str = "openai-compat",
+        transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:
         if not api_key:
             raise ChatModelError("LLM_API_KEY is required when XM_LLM_PROVIDER=openai", retryable=False)
@@ -28,6 +29,7 @@ class OpenAICompatChatModel(ChatModel):
             base_url=base_url.rstrip("/"),
             timeout=httpx.Timeout(timeout_s, connect=min(10.0, timeout_s)),
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            transport=transport,
         )
 
     async def complete(

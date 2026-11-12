@@ -169,5 +169,6 @@ audit(id PK, tenant_id, action, resource, detail, trace_id, created_at)
 | HTTP | ASGITransport 全链路 | 401/422/409、幂等、租户隔离、SSE |
 | 质量 | 评测脚本 | hit@k / MRR / 拒答 / 忠实度 |
 
-共 95 条，全部离线可复现。
+共 145 条，全部离线可复现，行覆盖率 92%。
+
 

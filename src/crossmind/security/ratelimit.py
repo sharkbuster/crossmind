@@ -32,9 +32,12 @@ class TokenBucketLimiter:
         with self._lock:
             bucket = self._buckets.get(key)
             if bucket is None:
-                bucket = _Bucket(tokens=self.burst)
+                bucket = _Bucket(tokens=self.burst, updated_at=now)
                 self._buckets[key] = bucket
-            elapsed = now - bucket.updated_at
+            # ``now`` is sampled before the bucket exists, so its ``updated_at``
+            # default factory can be a hair later: clamp to 0 or the very first
+            # request for a key would be short by a fraction of a token.
+            elapsed = max(0.0, now - bucket.updated_at)
             bucket.tokens = min(self.burst, bucket.tokens + elapsed * self.rate)
             bucket.updated_at = now
             if bucket.tokens >= self.cost:

@@ -73,6 +73,19 @@ def test_rate_limiter_allows_burst_then_denies() -> None:
     assert retry_after > 0
 
 
+def test_first_request_is_never_denied() -> None:
+    """Regression: a fresh bucket could be short by a fraction of a token.
+
+    ``now`` is sampled before the bucket's ``updated_at`` default factory, which
+    made elapsed negative and the very first request return 429 when
+    ``burst == cost``.
+    """
+    limiter = TokenBucketLimiter(rate_per_s=1.0, burst=1)
+    allowed, retry_after = limiter.allow("tenant-first", "chat")
+    assert allowed is True
+    assert retry_after == 0.0
+
+
 def test_rate_limit_error_carries_retry_after() -> None:
     error = RateLimited("too many", details={"retry_after_s": 1.5})
     assert error.status_code == 429

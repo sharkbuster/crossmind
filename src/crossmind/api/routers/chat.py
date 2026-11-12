@@ -9,6 +9,7 @@ from fastapi import APIRouter, Header
 from fastapi.responses import StreamingResponse
 
 from crossmind.api.deps import ChatPrincipalDep, ContainerDep
+from crossmind.domain.errors import GuardBlocked
 from crossmind.domain.models import ChatRequest, ChatResponse
 from crossmind.services.chat import ChatService
 
@@ -33,6 +34,13 @@ async def chat_stream(
     container: ContainerDep,
 ) -> StreamingResponse:
     service = ChatService(container)
+    # Validate *before* the response starts: raising from inside the generator
+    # would surface as "response already started" instead of a clean 422.
+    guard = container.guard.inspect(payload.message)
+    if guard.blocked:
+        raise GuardBlocked(
+            "请求被安全策略拦截", details={"reason": guard.reason, "redactions": guard.redactions}
+        )
 
     async def event_source() -> Any:
         async for event in service.stream(principal, payload):

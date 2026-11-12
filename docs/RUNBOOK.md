@@ -100,10 +100,11 @@ curl -s 'localhost:8000/api/v1/kb/search?q=保修期&top_k=5' -H 'X-API-Key: dem
 
 ## 8. 发版检查单
 
-- [ ] `pytest tests -q` 全绿（95 条）
+- [ ] `pytest tests -q` 全绿（145 条，覆盖率 ≥ 90%）
 - [ ] `python scripts/run_eval.py` 退出码 0，指标不低于上一版
 - [ ] `python scripts/load_test.py` 无错误，p95 不超过基线 20%
 - [ ] `/readyz` 返回 `ready`
 - [ ] 变更记录写入 `CHANGELOG.md`
 - [ ] 若改动了提示词或阈值，在 PR 描述里贴出评测对比
+
 

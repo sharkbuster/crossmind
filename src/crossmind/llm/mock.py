@@ -297,7 +297,7 @@ class MockChatModel(ChatModel):
             ensure_ascii=False,
         )
 
-    def _render_generic(self, payload: dict[str, Any], prompt: str) -> str:
+    def _render_generic(self, payload: dict[str, Any], prompt: str, system: str | None = None) -> str:
         text = str(payload.get("input") or payload.get("text") or "").strip()
         if text:
             return text

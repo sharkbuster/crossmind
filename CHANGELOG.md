@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与语义化版本。
 
@@ -18,7 +18,7 @@
 - **工程化**：API Key→租户、令牌桶限流、`Idempotency-Key` 幂等、统一错误码、输入防护（注入/PII）、
   模型重试/熔断/降级、JSON 日志、全链路 Trace、Prometheus 指标、审计表。
 - **控制台**：零构建原生 JS，SSE 流式对话、步骤时间线、引用卡片、任务审批、检索调试、运维观测。
-- **质量体系**：95 条测试；26 条评测集与 6 项指标；标定脚本；压测脚本；CI 质量门禁。
+- **质量体系**：145 条测试（行覆盖率 92%）；26 条评测集与 6 项指标；标定脚本；压测脚本；CI 质量门禁。
 - **交付物**：Dockerfile（非 root + healthcheck）、docker-compose、GitHub Actions、
   README / ARCHITECTURE / EVALUATION / RUNBOOK / ADR / RESUME。
 
@@ -34,3 +34,4 @@
 - NLI / LLM judge 替代词面门禁。
 - 写路径异步化与 Postgres 适配。
 - 真实 reranker 接入与在线模型评测基线。
+

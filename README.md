@@ -13,13 +13,13 @@ python -m uvicorn crossmind.api.app:app --port 8000
 
 | 维度 | 实测（本机离线模式，2026-11） |
 |---|---|
-| 自动化测试 | **95 passed**（单元 + HTTP 集成），0 skipped |
+| 自动化测试 | **145 passed**（单元 + HTTP 集成），0 skipped · 行覆盖率 **92%** |
 | 检索质量 | hit@5 **1.0000** · MRR **1.0000**（26 条评测集） |
 | 拒答正确率 | **0.9231**（可答 20/20 不误拒；不可答 4/6 正确拒答） |
 | 引用与忠实度 | 引用准确率 **1.0000** · 忠实度 **0.9971** · 要点覆盖 **0.85** |
 | 单请求延迟 | p50 **8.9 ms**（离线，单并发） |
 | 并发吞吐 | 300 请求 / 20 并发：**116.7 rps**，p50 **164 ms**，p95 **213 ms**，错误 **0** |
-| 代码规模 | Python 5.6k 行（72 文件） + 前端 673 行 |
+| 代码规模 | Python 6.1k 行（78 文件，含 1189 行测试） + 前端 673 行 |
 
 > 离线数字描述的是**流水线**（检索、引用回填、拒答、编排、序列化），不是大模型能力。
 > 切换 `XM_LLM_PROVIDER=openai` 后需重新跑评测，口径与局限见 [docs/EVALUATION.md](docs/EVALUATION.md)。
@@ -112,7 +112,7 @@ flowchart LR
 | 契约校验 | `domain/models.py` | pydantic 严格模型，`extra="forbid"` 防字段漂移 |
 | 可观测 | `obs/*` | JSON 日志 + Trace + Prometheus 指标 |
 | 审计 | `storage/db.py` | 审批、评测、拦截等动作留痕 |
-| 测试 | `tests/` | 95 条，覆盖检索、引用、门禁、编排、HTTP 契约 |
+| 测试 | `tests/` | 145 条，覆盖检索、引用、门禁、编排、HTTP 契约、供应商降级 |
 | 交付 | `Dockerfile` / `compose` / CI | 非 root 运行、健康检查、GitHub Actions 质量门禁 |
 
 ## 五、目录结构
@@ -134,7 +134,7 @@ crossmind/
 │   └── api/                 # 路由、依赖、中间件、错误处理
 ├── apps/web/                # 零构建 Vue-less 控制台（原生 JS + SSE）
 ├── data/                    # 12 篇语料 + 26 条评测集 + 商品目录
-├── tests/                   # 95 条测试
+├── tests/                   # 145 条测试（覆盖率 92%）
 ├── scripts/                 # 标定 / 评测 / 压测 / Windows 脚本
 ├── docs/                    # 架构、评测、运维、ADR、简历材料
 └── reports/                 # 评测与压测产物（可复现）
@@ -145,7 +145,7 @@ crossmind/
 ```bash
 make install    # 安装依赖
 make run        # 启动服务（/console/）
-make test       # 95 条测试
+make test       # 145 条测试
 make eval       # 离线评测 -> reports/rag-eval.{json,md}
 make load       # 300 请求 / 20 并发压测 -> reports/load-test.json
 make smoke      # 冒烟：能答的答、该拒的拒
@@ -185,4 +185,9 @@ Windows 用 `pwsh -File scripts/dev.ps1 test`（等价命令）。
 ---
 
 本项目为个人作品（非商业产品），语料与商品数据为虚构示例。许可证见 [LICENSE](LICENSE)。
+
+
+
+
+
 
