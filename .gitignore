@@ -16,3 +16,5 @@ jieba.cache
 htmlcov/
 coverage.xml
 
+pytest-of-*
+pytest_cache_dirs/
