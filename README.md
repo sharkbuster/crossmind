@@ -1,5 +1,7 @@
 # CrossMind
 
+[![CI](https://github.com/sharkbuster/crossmind/actions/workflows/ci.yml/badge.svg)](https://github.com/sharkbuster/crossmind/actions/workflows/ci.yml)
+
 > 跨境电商多智能体运营平台 · 客服 / 文案 / 翻译 / 选品 四模块一站式交付
 > Python 3.11+ · FastAPI · LangGraph · 混合检索 RAG · HITL 审批 · 全链路可观测
 >
