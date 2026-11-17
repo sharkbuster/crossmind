@@ -2,6 +2,8 @@
 
 > 跨境电商多智能体运营平台 · 客服 / 文案 / 翻译 / 选品 四模块一站式交付
 > Python 3.11+ · FastAPI · LangGraph · 混合检索 RAG · HITL 审批 · 全链路可观测
+>
+> 仓库：<https://github.com/sharkbuster/crossmind>
 
 **克隆下来就能跑，不需要任何 API Key**：默认使用离线确定性模型，真实模型只是一个环境变量开关。
 
